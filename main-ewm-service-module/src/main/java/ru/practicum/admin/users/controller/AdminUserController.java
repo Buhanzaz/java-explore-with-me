@@ -1,4 +1,4 @@
-package ru.practicum.admin.users;
+package ru.practicum.admin.users.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
@@ -25,8 +25,8 @@ public class AdminUserController {
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto addNewUser(@RequestBody @Validated NewUserRequest userRequest) {
-        return service.addUser(userRequest);
+    public UserDto addNewUser(@RequestBody @Valid NewUserRequest newUserRequest) {
+        return service.addUser(newUserRequest);
     }
 
     @GetMapping()
