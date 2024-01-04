@@ -1,3 +1,5 @@
+drop table if exists statistics cascade;
+
 create table if not exists statistics
 (
     id bigint generated always as identity primary key,
