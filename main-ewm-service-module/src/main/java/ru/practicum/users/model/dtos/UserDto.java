@@ -1,27 +1,29 @@
-package ru.practicum.admin.users.model.dtos;
+package ru.practicum.users.model.dtos;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.admin.users.model.entities.UserEntity;
+import lombok.Value;
+import ru.practicum.users.model.entities.UserEntity;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 /**
  * DTO for {@link UserEntity}
  */
-@Data
+@Value
 @Builder
-public class UserDto {
-    private final Long id;
+public class UserDto implements Serializable {
+    Long id;
     @Size(min = 6, max = 254)
     @Email
     @NotEmpty
     @NotBlank
-    private final String email;
+    String email;
     @NotEmpty
     @NotBlank
-    private final String name;
+    String name;
 }

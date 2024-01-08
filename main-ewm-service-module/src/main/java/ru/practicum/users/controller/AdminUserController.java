@@ -1,4 +1,4 @@
-package ru.practicum.admin.users.controller;
+package ru.practicum.users.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.Range;
@@ -6,9 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.admin.users.model.dtos.NewUserRequest;
-import ru.practicum.admin.users.model.dtos.UserDto;
-import ru.practicum.admin.users.service.AdminService;
+import ru.practicum.users.model.dtos.NewUserRequest;
+import ru.practicum.users.model.dtos.UserDto;
+import ru.practicum.users.service.AdminService;
 import ru.practicum.utils.Pages;
 
 import javax.validation.Valid;
@@ -41,5 +41,10 @@ public class AdminUserController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable Long userId) {
         service.deleteUser(userId);
+    }
+
+    @GetMapping("/{userId}")
+    public UserDto getUser(@PathVariable Long userId) {
+        return service.getUser(userId);
     }
 }

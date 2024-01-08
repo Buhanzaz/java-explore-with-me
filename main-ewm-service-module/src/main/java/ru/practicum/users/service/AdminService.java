@@ -1,8 +1,8 @@
-package ru.practicum.admin.users.service;
+package ru.practicum.users.service;
 
 import org.springframework.data.domain.Pageable;
-import ru.practicum.admin.users.model.dtos.NewUserRequest;
-import ru.practicum.admin.users.model.dtos.UserDto;
+import ru.practicum.users.model.dtos.NewUserRequest;
+import ru.practicum.users.model.dtos.UserDto;
 
 import java.util.List;
 
@@ -12,4 +12,6 @@ public interface AdminService {
     void deleteUser(Long userId);
 
     List<UserDto> getInfoOfUser(List<Long> ids, Pageable pageForUsers);
+
+    UserDto getUser(Long userId);
 }

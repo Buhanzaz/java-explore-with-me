@@ -1,13 +1,14 @@
-package ru.practicum.admin.users.service;
+package ru.practicum.users.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.practicum.admin.users.mapper.UserMapper;
-import ru.practicum.admin.users.model.dtos.NewUserRequest;
-import ru.practicum.admin.users.model.dtos.UserDto;
-import ru.practicum.admin.users.model.entities.UserEntity;
-import ru.practicum.admin.users.repository.AdminUserRepository;
+import ru.practicum.users.mapper.UserMapper;
+import ru.practicum.users.model.dtos.NewUserRequest;
+import ru.practicum.users.model.dtos.UserDto;
+import ru.practicum.users.model.entities.UserEntity;
+import ru.practicum.users.repository.UserRepository;
+import ru.practicum.users.service.AdminService;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 class AdminServiceImpl implements AdminService {
 
-    private final AdminUserRepository userRepository;
+    private final UserRepository userRepository;
     private final UserMapper userMapper;
 
     @Override
@@ -43,5 +44,10 @@ class AdminServiceImpl implements AdminService {
         }
 
         return byIds.stream().map(userMapper::toDto).collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDto getUser(Long userId) {
+        return userMapper.toDto(userRepository.findById(userId).orElseThrow());
     }
 }
