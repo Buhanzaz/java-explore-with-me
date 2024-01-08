@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.exceptons.ApiError;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 
 @Slf4j
 @RestControllerAdvice
@@ -38,7 +39,7 @@ public class ErrorHandler {
                 .timestamp(LocalDateTime.now()).build();
     }
 
-    @ExceptionHandler({EmptyResultDataAccessException.class})
+    @ExceptionHandler({EmptyResultDataAccessException.class, IllegalArgumentException.class, NoSuchElementException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiError handlerNotFound(final Exception exception) {
         log.debug("Получен статус 500 Internal server error {}", exception.getMessage(), exception);
