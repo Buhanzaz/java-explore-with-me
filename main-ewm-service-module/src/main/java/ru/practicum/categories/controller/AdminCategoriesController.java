@@ -1,12 +1,12 @@
-package ru.practicum.admin.categories.controller;
+package ru.practicum.categories.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.admin.categories.service.AdminCategoriesService;
-import ru.practicum.admin.categories.models.dtos.CategoryDto;
-import ru.practicum.admin.categories.models.dtos.NewCategoryDto;
+import ru.practicum.categories.service.AdminCategoriesService;
+import ru.practicum.categories.models.dtos.CategoryDto;
+import ru.practicum.categories.models.dtos.NewCategoryDto;
 
 import javax.validation.Valid;
 

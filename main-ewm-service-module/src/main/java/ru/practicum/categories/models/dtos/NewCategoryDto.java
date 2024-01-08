@@ -1,4 +1,4 @@
-package ru.practicum.admin.categories.models.dtos;
+package ru.practicum.categories.models.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

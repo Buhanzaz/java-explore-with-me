@@ -1,25 +1,25 @@
-package ru.practicum.admin.categories.service;
+package ru.practicum.categories.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.admin.categories.mapper.CategoryMapper;
-import ru.practicum.admin.categories.models.dtos.CategoryDto;
-import ru.practicum.admin.categories.models.dtos.NewCategoryDto;
-import ru.practicum.admin.categories.models.entities.CategoryEntity;
-import ru.practicum.admin.categories.repository.CategoryRepository;
+import ru.practicum.categories.mapper.CategoryMapper;
+import ru.practicum.categories.models.dtos.CategoryDto;
+import ru.practicum.categories.models.dtos.NewCategoryDto;
+import ru.practicum.categories.models.entities.CategoryEntity;
+import ru.practicum.categories.repository.CategoryRepository;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class AdminCategoriesServiceImpl implements AdminCategoriesService {
+class AdminCategoriesServiceImpl implements AdminCategoriesService {
 
     private final CategoryRepository repository;
     private final CategoryMapper mapper;
 
     @Override
     public CategoryDto addCategory(NewCategoryDto newCategoryDto) {
-        CategoryEntity entity = mapper.toEntity(newCategoryDto);
+        CategoryEntity entity = mapper.toNewEntity(newCategoryDto);
         CategoryEntity save = repository.save(entity);
 
         return mapper.toDto(save);
