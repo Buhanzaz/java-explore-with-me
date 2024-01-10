@@ -4,9 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.events.enums.State;
-import ru.practicum.events.model.dtos.EventFullDto;
-import ru.practicum.events.model.dtos.UpdateEventAdminRequest;
+import ru.practicum.enums.State;
+import ru.practicum.models.events.model.dtos.EventFullDto;
+import ru.practicum.models.events.model.dtos.UpdateEventAdminRequest;
 import ru.practicum.events.service.AdminEventService;
 
 import javax.validation.Valid;

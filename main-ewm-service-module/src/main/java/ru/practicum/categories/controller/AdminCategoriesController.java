@@ -5,8 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.categories.service.AdminCategoriesService;
-import ru.practicum.categories.models.dtos.CategoryDto;
-import ru.practicum.categories.models.dtos.NewCategoryDto;
+import ru.practicum.models.categories.models.dtos.CategoryDto;
+import ru.practicum.models.categories.models.dtos.NewCategoryDto;
 
 import javax.validation.Valid;
 

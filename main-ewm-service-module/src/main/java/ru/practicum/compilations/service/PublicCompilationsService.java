@@ -1,7 +1,7 @@
 package ru.practicum.compilations.service;
 
 import org.springframework.data.domain.Pageable;
-import ru.practicum.compilations.model.dtos.CompilationDto;
+import ru.practicum.models.compilations.model.dtos.CompilationDto;
 
 import java.util.List;
 

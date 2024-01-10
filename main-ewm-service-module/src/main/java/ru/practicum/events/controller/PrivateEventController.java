@@ -5,11 +5,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.events.model.dtos.*;
 import ru.practicum.events.service.PrivateEventService;
-import ru.practicum.users.model.dtos.EventRequestStatusUpdateRequest;
-import ru.practicum.users.model.dtos.EventRequestStatusUpdateResult;
-import ru.practicum.users.model.dtos.ParticipationRequestDto;
+import ru.practicum.models.events.model.dtos.EventFullDto;
+import ru.practicum.models.events.model.dtos.EventShortDto;
+import ru.practicum.models.events.model.dtos.NewEventDto;
+import ru.practicum.models.events.model.dtos.UpdateEventUserRequest;
+import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateRequest;
+import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateResult;
+import ru.practicum.models.requests.model.dtos.ParticipationRequestDto;
 import ru.practicum.utils.Pages;
 
 import javax.validation.Valid;

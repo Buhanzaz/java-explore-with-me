@@ -4,30 +4,30 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.categories.models.entities.CategoryEntity;
+import ru.practicum.models.categories.models.entities.CategoryEntity;
 import ru.practicum.categories.repository.CategoryRepository;
-import ru.practicum.events.enums.State;
-import ru.practicum.events.enums.StateActionForUsers;
+import ru.practicum.enums.State;
+import ru.practicum.enums.StateActionForUsers;
 import ru.practicum.events.mapper.EventMapper;
-import ru.practicum.events.model.dtos.EventFullDto;
-import ru.practicum.events.model.dtos.EventShortDto;
-import ru.practicum.events.model.dtos.NewEventDto;
-import ru.practicum.events.model.dtos.UpdateEventUserRequest;
-import ru.practicum.events.model.entities.EventEntity;
+import ru.practicum.models.events.model.dtos.EventFullDto;
+import ru.practicum.models.events.model.dtos.EventShortDto;
+import ru.practicum.models.events.model.dtos.NewEventDto;
+import ru.practicum.models.events.model.dtos.UpdateEventUserRequest;
+import ru.practicum.models.events.model.entities.EventEntity;
 import ru.practicum.events.repository.EventRepository;
 import ru.practicum.events.service.PrivateEventService;
 import ru.practicum.exceptons.excepton.ConflictException;
 import ru.practicum.exceptons.excepton.DataAndTimeException;
 import ru.practicum.exceptons.excepton.EnumException;
 import ru.practicum.exceptons.excepton.NotFoundException;
-import ru.practicum.users.enums.Status;
-import ru.practicum.users.mapper.RequestMapper;
-import ru.practicum.users.model.dtos.EventRequestStatusUpdateRequest;
-import ru.practicum.users.model.dtos.EventRequestStatusUpdateResult;
-import ru.practicum.users.model.dtos.ParticipationRequestDto;
-import ru.practicum.users.model.entities.ParticipationRequestEntity;
-import ru.practicum.users.model.entities.UserEntity;
-import ru.practicum.users.repository.RequestRepository;
+import ru.practicum.enums.Status;
+import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateRequest;
+import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateResult;
+import ru.practicum.models.requests.model.dtos.ParticipationRequestDto;
+import ru.practicum.models.requests.model.entities.ParticipationRequestEntity;
+import ru.practicum.models.users.entities.UserEntity;
+import ru.practicum.requests.mapper.RequestMapper;
+import ru.practicum.requests.repository.RequestRepository;
 import ru.practicum.users.repository.UserRepository;
 
 import java.time.LocalDateTime;
@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//TODO Сделать нормальные ошибки
 @Service
 @Transactional
 @RequiredArgsConstructor

@@ -1,8 +1,8 @@
 package ru.practicum.events.mapper;
 
 import org.mapstruct.*;
-import ru.practicum.events.model.dtos.LocationDto;
-import ru.practicum.events.model.entities.LocationEntity;
+import ru.practicum.models.compilations.Locations.model.dtos.LocationDto;
+import ru.practicum.models.compilations.Locations.model.entities.LocationEntity;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface LocationMapper {
@@ -11,5 +11,5 @@ public interface LocationMapper {
     LocationDto toDto(LocationEntity locationEntity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    LocationEntity partialUpdate(LocationDto locationDto, @MappingTarget LocationEntity locationEntity);
+    void partialUpdate(LocationDto locationDto, @MappingTarget LocationEntity locationEntity);
 }

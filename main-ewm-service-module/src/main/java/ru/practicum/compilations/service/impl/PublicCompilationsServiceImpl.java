@@ -4,8 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import ru.practicum.compilations.mapper.CompilationMapper;
-import ru.practicum.compilations.model.dtos.CompilationDto;
-import ru.practicum.compilations.model.entities.CompilationEntity;
+import ru.practicum.models.compilations.model.dtos.CompilationDto;
+import ru.practicum.models.compilations.model.entities.CompilationEntity;
 import ru.practicum.compilations.repository.CompilationRepository;
 import ru.practicum.compilations.service.PublicCompilationsService;
 

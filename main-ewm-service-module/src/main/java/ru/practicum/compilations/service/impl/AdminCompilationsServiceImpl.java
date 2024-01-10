@@ -4,13 +4,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilations.mapper.CompilationMapper;
-import ru.practicum.compilations.model.dtos.CompilationDto;
-import ru.practicum.compilations.model.dtos.NewCompilationDto;
-import ru.practicum.compilations.model.dtos.UpdateCompilationRequest;
-import ru.practicum.compilations.model.entities.CompilationEntity;
+import ru.practicum.models.compilations.model.dtos.CompilationDto;
+import ru.practicum.models.compilations.model.dtos.NewCompilationDto;
+import ru.practicum.models.compilations.model.dtos.UpdateCompilationRequest;
+import ru.practicum.models.compilations.model.entities.CompilationEntity;
 import ru.practicum.compilations.repository.CompilationRepository;
 import ru.practicum.compilations.service.AdminCompilationsService;
-import ru.practicum.events.model.entities.EventEntity;
+import ru.practicum.models.events.model.entities.EventEntity;
 import ru.practicum.events.repository.EventRepository;
 
 import java.util.ArrayList;

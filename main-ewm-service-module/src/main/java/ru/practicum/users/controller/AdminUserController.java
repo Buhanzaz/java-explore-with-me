@@ -5,8 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.users.model.dtos.NewUserRequest;
-import ru.practicum.users.model.dtos.UserDto;
+import ru.practicum.models.users.dtos.NewUserRequest;
+import ru.practicum.models.users.dtos.UserDto;
 import ru.practicum.users.service.AdminService;
 import ru.practicum.utils.Pages;
 

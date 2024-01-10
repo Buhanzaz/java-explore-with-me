@@ -2,8 +2,8 @@ package ru.practicum.events.mapper;
 
 import org.mapstruct.*;
 import ru.practicum.categories.mapper.CategoryMapper;
-import ru.practicum.events.model.dtos.*;
-import ru.practicum.events.model.entities.EventEntity;
+import ru.practicum.models.events.model.dtos.*;
+import ru.practicum.models.events.model.entities.EventEntity;
 import ru.practicum.users.mapper.UserMapper;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {LocationMapper.class, CategoryMapper.class, UserMapper.class})

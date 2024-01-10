@@ -3,9 +3,9 @@ package ru.practicum.events.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.events.enums.Sort;
-import ru.practicum.events.model.dtos.EventFullDto;
-import ru.practicum.events.model.dtos.EventShortDto;
+import ru.practicum.enums.Sort;
+import ru.practicum.models.events.model.dtos.EventFullDto;
+import ru.practicum.models.events.model.dtos.EventShortDto;
 import ru.practicum.events.service.PublicEventService;
 
 import javax.validation.constraints.Min;

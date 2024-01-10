@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.categories.models.dtos.CategoryDto;
+import ru.practicum.models.categories.models.dtos.CategoryDto;
 import ru.practicum.categories.service.PublicCategoriesService;
 import ru.practicum.utils.Pages;
 
