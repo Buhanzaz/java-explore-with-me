@@ -36,7 +36,7 @@ public class AdminEventController {
     }
 
     @PatchMapping("{eventId}")
-    public EventFullDto EventReviewByAdministrator(@PathVariable Long eventId,
+    public EventFullDto eventReviewByAdministrator(@PathVariable Long eventId,
                                                    @RequestBody @Valid UpdateEventAdminRequest updateEvent) {
         return service.reviewEvent(eventId, updateEvent);
     }

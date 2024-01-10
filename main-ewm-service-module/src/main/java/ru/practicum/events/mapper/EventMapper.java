@@ -15,21 +15,12 @@ public interface EventMapper {
 
     EventFullDto toDto(EventEntity eventEntity);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    EventEntity updateForUser(EventFullDto eventFullDto, @MappingTarget EventEntity eventEntity);
-
     EventEntity toEntity(EventShortDto eventShortDto);
 
     EventShortDto toShortDto(EventEntity eventEntity);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    EventEntity updateForUser(EventShortDto eventShortDto, @MappingTarget EventEntity eventEntity);
-
     @Mapping(source = "category", target = "category.id")
     EventEntity toEntity(UpdateEventUserRequest updateEventUserRequest);
-
-    @Mapping(source = "category.id", target = "category")
-    UpdateEventUserRequest toDto1(EventEntity eventEntity);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "category", target = "category.id", ignore = true)
@@ -40,10 +31,10 @@ public interface EventMapper {
     @Mapping(source = "category", target = "category.id", ignore = true)
     @Mapping(source = "stateAction", target = "state", ignore = true)
     EventEntity updateForAdmin(UpdateEventAdminRequest updateEventAdminRequest, @MappingTarget EventEntity eventEntity);
-//    @InheritInverseConfiguration(name = "toEntity")
+//    @InheritInverseConfiguration(name = "toEntityNotNullEvents")
 //    NewEventDto toDto(EventEntity eventEntity);
 //
-//    @InheritConfiguration(name = "toEntity")
+//    @InheritConfiguration(name = "toEntityNotNullEvents")
 //    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 //    EventEntity updateForUser(NewEventDto newEventDto, @MappingTarget EventEntity eventEntity);
 }

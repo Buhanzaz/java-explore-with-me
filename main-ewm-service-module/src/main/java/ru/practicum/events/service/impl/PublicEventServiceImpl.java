@@ -2,14 +2,17 @@ package ru.practicum.events.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import ru.practicum.events.enums.State;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.events.enums.Sort;
+import ru.practicum.events.enums.State;
 import ru.practicum.events.mapper.EventMapper;
 import ru.practicum.events.model.dtos.EventFullDto;
 import ru.practicum.events.model.dtos.EventShortDto;
 import ru.practicum.events.model.entities.EventEntity;
 import ru.practicum.events.repository.EventRepository;
 import ru.practicum.events.service.PublicEventService;
+import ru.practicum.exceptons.excepton.DataAndTimeException;
+import ru.practicum.exceptons.excepton.NotFoundException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -22,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+
 @RequiredArgsConstructor
 class PublicEventServiceImpl implements PublicEventService {
     private final EventRepository eventRepository;
@@ -29,8 +33,13 @@ class PublicEventServiceImpl implements PublicEventService {
     private final EntityManager entityManager;
 
     @Override
+    @Transactional
     public EventFullDto getEvent(Long id) {
-        return eventMapper.toDto(eventRepository.findById(id).orElseThrow());
+        EventEntity eventEntity = eventRepository.findByIdAndState(id, State.PUBLISHED)
+                .orElseThrow(() -> new NotFoundException("Not found event"));
+        eventEntity.setViews(eventEntity.getViews() + 1);
+        eventRepository.flush();
+        return eventMapper.toDto(eventEntity);
     }
 
     @Override
@@ -43,7 +52,7 @@ class PublicEventServiceImpl implements PublicEventService {
         Root<EventEntity> root = query.from(EventEntity.class);
         Predicate criteria = criteriaBuilder.conjunction();
 
-        if (!text.isEmpty() || !text.isBlank()) {
+        if (text != null && !text.isBlank()) {
             Predicate annotation = criteriaBuilder.like(criteriaBuilder.lower(root.get("annotation")).as(String.class), "%" + text.toLowerCase() + "%");
             Predicate description = criteriaBuilder.like(criteriaBuilder.lower(root.get("description")).as(String.class), "%" + text.toLowerCase() + "%");
 
@@ -58,14 +67,20 @@ class PublicEventServiceImpl implements PublicEventService {
             criteria = criteriaBuilder.and(criteria, root.get("paid").in(paid));
         }
 
+        if (rangeStart != null && rangeEnd != null && !rangeStart.isBefore(rangeEnd)) {
+            throw new DataAndTimeException("Initial time should be greater than the end time");
+        }
+
         if (rangeStart != null) {
             Predicate greaterTime = criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate").as(LocalDateTime.class), rangeStart);
             criteria = criteriaBuilder.and(criteria, greaterTime);
         }
+
         if (rangeEnd != null) {
             Predicate lessTime = criteriaBuilder.lessThanOrEqualTo(root.get("eventDate").as(LocalDateTime.class), rangeEnd);
             criteria = criteriaBuilder.and(criteria, lessTime);
         }
+
 
         if (sort != null) {
             if (sort == Sort.EVENT_DATE) {
@@ -74,6 +89,11 @@ class PublicEventServiceImpl implements PublicEventService {
             if (sort.equals(Sort.VIEWS)) {
                 query.orderBy(criteriaBuilder.asc(root.get("views")));
             }
+        }
+
+        if (onlyAvailable) {
+            criteria = criteriaBuilder.and(criteria,
+                    criteriaBuilder.notEqual(root.get("confirmedRequests"), root.get("participantLimit")));
         }
 
         criteria = criteriaBuilder.and(criteria, root.get("state").in(State.PUBLISHED));

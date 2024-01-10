@@ -26,8 +26,8 @@ public class EventEntity {
     @Column(length = 2000)
     String annotation;
 
-    @OneToOne
-    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
     CategoryEntity category;
 
     Long confirmedRequests;
@@ -39,8 +39,8 @@ public class EventEntity {
 
     LocalDateTime eventDate;
 
-    @OneToOne
-    @JoinColumn(name = "initiator_id", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name = "initiator_id", referencedColumnName = "id", nullable = false)
     UserEntity initiator;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -73,16 +73,11 @@ public class EventEntity {
         this.initiator = initiator;
         this.location = location;
         this.paid = Objects.requireNonNullElse(paid, false);
-        this.participantLimit = participantLimit;
+        this.participantLimit = Objects.requireNonNullElse(participantLimit, 0);
         this.publishedOn = publishedOn;
         this.requestModeration = Objects.requireNonNullElse(requestModeration, true);
-        //this.state = Objects.requireNonNullElseGet(state, State.PENDING);
-        if (state == null) {
-            this.state = State.PENDING;
-        } else {
-            this.state = null;
-        }
         this.title = title;
         this.views = Objects.requireNonNullElse(views, 0L);
+        this.state = Objects.requireNonNullElse(state, State.PENDING);
     }
 }

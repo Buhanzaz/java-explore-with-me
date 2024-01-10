@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Value;
 import ru.practicum.categories.models.dtos.CategoryDto;
 import ru.practicum.events.enums.State;
-import ru.practicum.events.model.entities.EventEntity;
 import ru.practicum.users.model.dtos.UserShortDto;
 
 import java.io.Serializable;

@@ -9,13 +9,17 @@ import ru.practicum.categories.repository.CategoryRepository;
 import ru.practicum.events.enums.State;
 import ru.practicum.events.enums.StateActionForUsers;
 import ru.practicum.events.mapper.EventMapper;
-import ru.practicum.events.model.dtos.*;
+import ru.practicum.events.model.dtos.EventFullDto;
+import ru.practicum.events.model.dtos.EventShortDto;
+import ru.practicum.events.model.dtos.NewEventDto;
+import ru.practicum.events.model.dtos.UpdateEventUserRequest;
 import ru.practicum.events.model.entities.EventEntity;
 import ru.practicum.events.repository.EventRepository;
 import ru.practicum.events.service.PrivateEventService;
-import ru.practicum.exceptons.excepton.ChangeStatusRequestException;
+import ru.practicum.exceptons.excepton.ConflictException;
 import ru.practicum.exceptons.excepton.DataAndTimeException;
-import ru.practicum.exceptons.excepton.UpdateEventException;
+import ru.practicum.exceptons.excepton.EnumException;
+import ru.practicum.exceptons.excepton.NotFoundException;
 import ru.practicum.users.enums.Status;
 import ru.practicum.users.mapper.RequestMapper;
 import ru.practicum.users.model.dtos.EventRequestStatusUpdateRequest;
@@ -51,7 +55,7 @@ class PrivateEventServiceImpl implements PrivateEventService {
         LocalDateTime time = newEventDto.getEventDate();
 
         if (time.isBefore(LocalDateTime.now().plusHours(2))) {
-            throw new DataAndTimeException("");
+            throw new DataAndTimeException("You can change the event no earlier than two hours before the start");
         } else {
             EventEntity eventEntity = eventMapper.toEntity(newEventDto);
 
@@ -80,13 +84,14 @@ class PrivateEventServiceImpl implements PrivateEventService {
     @Transactional
     public EventFullDto ownerUpdateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventsDto) {
         EventEntity updatedEvent;
-        EventEntity eventEntity = eventRepository.findFirstByInitiator_IdAndId(userId, eventId).orElseThrow();
+        EventEntity eventEntity = eventRepository.findFirstByInitiator_IdAndId(userId, eventId)
+                .orElseThrow(() -> new NotFoundException("Not found event"));
 
         if (eventEntity.getState() != State.PUBLISHED) {
             if (updateEventsDto.getEventDate() != null) {
                 LocalDateTime time = updateEventsDto.getEventDate();
                 if (time.isBefore(LocalDateTime.now().plusHours(2))) {
-                    throw new DataAndTimeException("");
+                    throw new DataAndTimeException("You can change the event no earlier than two hours before the start");
                 } else {
                     updatedEvent = update(updateEventsDto, eventEntity);
                 }
@@ -94,7 +99,7 @@ class PrivateEventServiceImpl implements PrivateEventService {
                 updatedEvent = update(updateEventsDto, eventEntity);
             }
         } else {
-            throw new UpdateEventException("");
+            throw new ConflictException("You don't have the rights to publish, send the event for review");
         }
         return eventMapper.toDto(updatedEvent);
     }
@@ -117,57 +122,73 @@ class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     public List<ParticipationRequestDto> getUserRequests(Long userId, Long eventId) {
         List<ParticipationRequestEntity> requestEntities = requestRepository
-                .findAllByEvent_Initiator_IdAndEvent_IdAndStatus(userId, eventId, Status.PENDING);
+                .findAllByEvent_Initiator_IdAndEvent_Id(userId, eventId);
         return requestEntities.stream().map(requestMapper::toDto).collect(Collectors.toList());
     }
 
     @Override
+    @Transactional
     public EventRequestStatusUpdateResult changingStatusRequest(Long userId, Long eventId,
                                                                 EventRequestStatusUpdateRequest updateRequest) {
-        EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult();
-        if (updateRequest == null) {
-            return result;
+        EventEntity eventEntity = eventRepository.findFirstByInitiator_IdAndId(userId, eventId).orElseThrow(
+                () -> new NotFoundException("Not found event"));
+
+        if (!eventEntity.getRequestModeration() && updateRequest == null) {
+            return new EventRequestStatusUpdateResult();
         }
 
-        EventEntity eventEntity = eventRepository.findFirstByInitiator_IdAndId(userId, eventId).orElseThrow();
-
-        if (!eventEntity.getRequestModeration()) {
-            return result;
-        }
-
-        List<ParticipationRequestEntity> participationRequestEntities = requestRepository.findAllByEvent_Initiator_IdAndEvent_IdAndStatus(userId, eventId, Status.PENDING);
-        Long confirmedRequests = eventEntity.getConfirmedRequests();
-        Long participantLimit = Long.valueOf(eventEntity.getParticipantLimit());
         List<Long> requestIds = updateRequest.getRequestIds();
+        List<ParticipationRequestDto> participationRequestDtoList = requestMapper.toDtoList(requestRepository
+                .findAllById(requestIds));
 
-
-        if (!confirmedRequests.equals(participantLimit) || participantLimit == 0) {
-            List<ParticipationRequestEntity> confirmedRequestsList = new ArrayList<>();
-            List<ParticipationRequestEntity> rejectedRequestsList = new ArrayList<>();
-            for (ParticipationRequestEntity participationRequest : participationRequestEntities) {
-                if (requestIds.contains(participationRequest.getId())) {
-                    if (updateRequest.getStatus().equals(Status.CONFIRMED)) {
-                        participationRequest.setStatus(Status.CONFIRMED);
-                        confirmedRequestsList.add(participationRequest);
-                        eventEntity.setConfirmedRequests(confirmedRequests++);
-                    }
-
-                    if (updateRequest.getStatus().equals(Status.REJECTED)) {
-                        participationRequest.setStatus(Status.REJECTED);
-                        rejectedRequestsList.add(participationRequest);
-                    }
-
-                } /*else {
-                    participationRequest.setStatus(Status.REJECTED);
-                    rejectedRequestsList.add(participationRequest);
-                }*/
-            }
-
-            result.setConfirmedRequests(confirmedRequestsList.stream().map(requestMapper::toDto).collect(Collectors.toList()));
-            result.setRejectedRequests(rejectedRequestsList.stream().map(requestMapper::toDto).collect(Collectors.toList()));
+        if (participationRequestDtoList.isEmpty()) {
+            throw new NotFoundException("Not found participation request");
         } else {
-            throw new ChangeStatusRequestException("The application limit has been reached");
+            long confirmedRequests = eventEntity.getConfirmedRequests();
+            long participantLimit = eventEntity.getParticipantLimit();
+
+            List<ParticipationRequestDto> confirmedRequestsList = new ArrayList<>();
+            List<ParticipationRequestDto> rejectedRequestsList = new ArrayList<>();
+
+            Status status = updateRequest.getStatus();
+
+            for (ParticipationRequestDto participationRequest : participationRequestDtoList) {
+                Status statusRequest = participationRequest.getStatus();
+
+                if (confirmedRequests != participantLimit || participantLimit == 0) {
+                    switch (status) {
+                        case CONFIRMED:
+                            if (statusRequest.equals(Status.PENDING)) {
+                                participationRequest.setStatus(Status.CONFIRMED);
+                                confirmedRequestsList.add(participationRequest);
+                                confirmedRequests++;
+                            } else {
+                                continue;
+                            }
+                            break;
+                        case REJECTED:
+                            if (statusRequest.equals(Status.PENDING)) {
+                                participationRequest.setStatus(Status.REJECTED);
+                                rejectedRequestsList.add(participationRequest);
+                            } else if (statusRequest.equals(Status.CONFIRMED)) {
+                                throw new ConflictException("You cannot cancel a confirmed application");
+                            } else {
+                                continue;
+                            }
+                            break;
+                        default:
+                            throw new EnumException("You can confirm or rejected the status request");
+                    }
+                } else {
+                    throw new ConflictException("The application limit has been reached");
+                }
+            }
+            EventRequestStatusUpdateResult updateResult = new EventRequestStatusUpdateResult();
+            updateResult.setConfirmedRequests(confirmedRequestsList);
+            updateResult.setRejectedRequests(rejectedRequestsList);
+            eventEntity.setConfirmedRequests(confirmedRequests);
+            return updateResult;
         }
-        return result;
     }
 }
+

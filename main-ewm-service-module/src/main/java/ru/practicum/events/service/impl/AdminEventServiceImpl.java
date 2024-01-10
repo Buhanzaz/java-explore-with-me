@@ -13,8 +13,8 @@ import ru.practicum.events.model.dtos.UpdateEventAdminRequest;
 import ru.practicum.events.model.entities.EventEntity;
 import ru.practicum.events.repository.EventRepository;
 import ru.practicum.events.service.AdminEventService;
+import ru.practicum.exceptons.excepton.ConflictException;
 import ru.practicum.exceptons.excepton.DataAndTimeException;
-import ru.practicum.exceptons.excepton.UpdateEventException;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -59,6 +59,10 @@ class AdminEventServiceImpl implements AdminEventService {
             }
         }
 
+        if (rangeStart != null && rangeEnd != null && !rangeStart.isBefore(rangeEnd)) {
+            throw new DataAndTimeException("Initial time should be greater than the end time");
+        }
+
         if (rangeStart != null) {
             Predicate greaterTime = criteriaBuilder.greaterThanOrEqualTo(root.get("eventDate").as(LocalDateTime.class), rangeStart);
             criteria = criteriaBuilder.and(criteria, greaterTime);
@@ -87,25 +91,30 @@ class AdminEventServiceImpl implements AdminEventService {
         EventEntity updatedEvent;
         EventEntity eventEntity = eventRepository.findById(eventId).orElseThrow();
         LocalDateTime datePublication = LocalDateTime.now();
+//        if (!eventEntity.getState().equals(State.PUBLISHED) && !eventEntity.getState().equals(State.CANCELED)) {
+        if (eventEntity.getState().equals(State.PENDING)) {
+            if (datePublication.isBefore(eventEntity.getEventDate().minusHours(1))) {
+                updatedEvent = eventMapper.updateForAdmin(updateEventAdminRequest, eventEntity);
 
-        if (eventEntity.getEventDate().minusHours(1).isAfter(datePublication)) {
-            updatedEvent = eventMapper.updateForAdmin(updateEventAdminRequest, eventEntity);
+                if (updateEventAdminRequest.getCategory() != null) {
+                    CategoryEntity categoryEntity = categoryRepository.findById(updateEventAdminRequest.getCategory()).orElseThrow();
+                    updatedEvent.setCategory(categoryEntity);
+                }
 
-            if (updateEventAdminRequest.getCategory() != null) {
-                CategoryEntity categoryEntity = categoryRepository.findById(updateEventAdminRequest.getCategory()).orElseThrow();
-                updatedEvent.setCategory(categoryEntity);
-            }
-
-            if (updateEventAdminRequest.getStateAction() == StateActionForAdmin.PUBLISH_EVENT) {
-                updatedEvent.setState(State.PUBLISHED);
-                updatedEvent.setPublishedOn(datePublication);
-            } else if (updateEventAdminRequest.getStateAction() == StateActionForAdmin.REJECT_EVENT && eventEntity.getState() != State.PUBLISHED) {
-                updatedEvent.setState(State.CANCELED);
+                if (updateEventAdminRequest.getStateAction() == StateActionForAdmin.PUBLISH_EVENT) {
+                    updatedEvent.setState(State.PUBLISHED);
+                    updatedEvent.setPublishedOn(datePublication);
+                } else if (updateEventAdminRequest.getStateAction() == StateActionForAdmin.REJECT_EVENT) {
+                    updatedEvent.setState(State.CANCELED);
+                }
+//                else {
+//                    throw new UpdateEventException("The event has already passed");
+//                }
             } else {
-                throw new UpdateEventException("");
+                throw new DataAndTimeException("You can publish the event no earlier than an hour before the start");
             }
         } else {
-            throw new DataAndTimeException("");
+            throw new ConflictException("This event is published or canceled");
         }
 
         return eventMapper.toDto(updatedEvent);
