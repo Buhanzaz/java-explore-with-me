@@ -1,7 +1,6 @@
 package ru.practicum.users.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.hibernate.validator.constraints.Range;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
@@ -12,6 +11,7 @@ import ru.practicum.users.service.AdminService;
 import ru.practicum.utils.Pages;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class AdminUserController {
     @GetMapping()
     public List<UserDto> getInformationOfUsers(@RequestParam(required = false) List<Long> ids,
                                                @RequestParam(defaultValue = "0", required = false) @PositiveOrZero Integer from,
-                                               @RequestParam(defaultValue = "10", required = false) @Range(min = 1, max = 20) Integer size) {
+                                               @RequestParam(defaultValue = "10", required = false) @Min(1) Integer size) {
         Pageable pageForUsers = Pages.getPageForUsers(from, size);
         return service.getInfoOfUser(ids, pageForUsers);
     }

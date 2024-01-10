@@ -3,9 +3,10 @@ package ru.practicum.users.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.events.enums.State;
 import ru.practicum.events.model.entities.EventEntity;
 import ru.practicum.events.repository.EventRepository;
-import ru.practicum.exceptons.excepton.ParticipationRequestException;
+import ru.practicum.exceptons.excepton.ConflictException;
 import ru.practicum.users.enums.Status;
 import ru.practicum.users.mapper.RequestMapper;
 import ru.practicum.users.model.dtos.ParticipationRequestDto;
@@ -41,29 +42,39 @@ class PrivateUserRequestServiceImpl implements PrivateUserRequestService {
         UserEntity userEntity = userRepository.findById(userId).orElseThrow();
         EventEntity eventEntity = eventRepository.findById(eventId).orElseThrow();
 
-        if (!eventEntity.getInitiator().equals(userEntity)) {
-            Long confirmedRequests = eventEntity.getConfirmedRequests();
-            Long participantLimit = Long.valueOf(eventEntity.getParticipantLimit());
+        if (eventEntity.getState().equals(State.PUBLISHED)) {
+            if (!eventEntity.getInitiator().equals(userEntity)) {
+                long confirmedRequests = eventEntity.getConfirmedRequests();
+                long participantLimit = eventEntity.getParticipantLimit();
 
-            if (!confirmedRequests.equals(participantLimit) || participantLimit == 0) {
-                ParticipationRequestEntity.ParticipationRequestEntityBuilder requestEntity = ParticipationRequestEntity.builder();
-                requestEntity.created(LocalDateTime.now());
-                requestEntity.event(eventEntity);
-                requestEntity.requester(userEntity);
 
-                if (eventEntity.getRequestModeration()) {
-                    requestEntity.status(Status.PENDING);
+                if (confirmedRequests != participantLimit || participantLimit == 0) {
+                    ParticipationRequestEntity.ParticipationRequestEntityBuilder requestEntity = ParticipationRequestEntity.builder();
+                    requestEntity.created(LocalDateTime.now());
+                    requestEntity.event(eventEntity);
+                    requestEntity.requester(userEntity);
+
+                    if (participantLimit != 0) {
+                        if (eventEntity.getRequestModeration()) {
+                            requestEntity.status(Status.PENDING);
+                        } else {
+                            requestEntity.status(Status.CONFIRMED);
+                            eventEntity.setConfirmedRequests(eventEntity.getConfirmedRequests() + 1);
+                        }
+                    } else {
+                        requestEntity.status(Status.CONFIRMED);
+                        eventEntity.setConfirmedRequests(eventEntity.getConfirmedRequests() + 1);
+                    }
+
+                    return requestMapper.toDto(requestRepository.save(requestEntity.build()));
                 } else {
-                    requestEntity.status(Status.CONFIRMED);
-                    eventEntity.setConfirmedRequests(eventEntity.getConfirmedRequests() + 1);
+                    throw new ConflictException("The limit of participants is filled");
                 }
-
-                return requestMapper.toDto(requestRepository.save(requestEntity.build()));
             } else {
-                throw new ParticipationRequestException("");
+                throw new ConflictException("You can't participate in the event you created");
             }
         } else {
-            throw new ParticipationRequestException("");
+            throw new ConflictException("This event is published or canceled");
         }
     }
 

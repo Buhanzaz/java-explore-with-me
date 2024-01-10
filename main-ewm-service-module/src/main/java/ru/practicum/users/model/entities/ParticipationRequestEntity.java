@@ -25,11 +25,11 @@ public class ParticipationRequestEntity {
     @Column(nullable = false)
     LocalDateTime created;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "event_id", referencedColumnName = "id", nullable = false)
     EventEntity event;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "requester_id", referencedColumnName = "id", nullable = false)
     UserEntity requester;
 

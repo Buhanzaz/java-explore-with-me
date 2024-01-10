@@ -4,6 +4,8 @@ import org.mapstruct.*;
 import ru.practicum.users.model.dtos.ParticipationRequestDto;
 import ru.practicum.users.model.entities.ParticipationRequestEntity;
 
+import java.util.List;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface RequestMapper {
     @Mapping(target = "requester", ignore = true)
@@ -15,7 +17,5 @@ public interface RequestMapper {
     @Mapping(source = "event.id", target = "event")
     ParticipationRequestDto toDto(ParticipationRequestEntity participationRequestEntity);
 
-    @InheritConfiguration(name = "toEntity")
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    ParticipationRequestEntity partialUpdate(ParticipationRequestDto participationRequestDto, @MappingTarget ParticipationRequestEntity participationRequestEntity);
+    List<ParticipationRequestDto> toDtoList(List<ParticipationRequestEntity> entityList);
 }

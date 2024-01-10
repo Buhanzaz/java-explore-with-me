@@ -37,10 +37,10 @@ class AdminServiceImpl implements AdminService {
     public List<UserDto> getInfoOfUser(List<Long> ids, Pageable pageForUsers) {
         List<UserEntity> byIds;
 
-        if (!ids.isEmpty()) {
+        if (ids != null && !ids.isEmpty()) {
             byIds = userRepository.findByIds(ids, pageForUsers);
         } else {
-            byIds = userRepository.findAll();
+            byIds = userRepository.findAll(pageForUsers).toList();
         }
 
         return byIds.stream().map(userMapper::toDto).collect(Collectors.toList());
