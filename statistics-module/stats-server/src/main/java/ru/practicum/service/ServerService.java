@@ -1,8 +1,8 @@
 package ru.practicum.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.dto.ResponseStatisticDto;
-import ru.practicum.dto.StatisticDto;
+import ru.practicum.dto.EndpointHit;
+import ru.practicum.dto.ViewStats;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,8 +10,8 @@ import java.util.List;
 
 public interface ServerService {
     @Transactional
-    StatisticDto addStatsInfo(StatisticDto dto);
+    EndpointHit addStatsInfo(EndpointHit dto);
 
     @Transactional(readOnly = true)
-    List<ResponseStatisticDto> statisticsOutput(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique);
+    List<ViewStats> statisticsOutput(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique);
 }

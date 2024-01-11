@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Table(name = "statistics")
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StatisticEntity {
+public class EndpointHitEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

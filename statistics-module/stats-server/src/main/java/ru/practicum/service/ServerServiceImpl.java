@@ -4,10 +4,10 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import ru.practicum.dto.EndpointHit;
 import ru.practicum.mapper.StatsServerMapper;
-import ru.practicum.dto.ResponseStatisticDto;
-import ru.practicum.dto.StatisticDto;
-import ru.practicum.model.StatisticEntity;
+import ru.practicum.dto.ViewStats;
+import ru.practicum.model.EndpointHitEntity;
 import ru.practicum.repository.ServerStatsRepository;
 
 import java.time.LocalDateTime;
@@ -22,14 +22,14 @@ public class ServerServiceImpl implements ServerService {
     ServerStatsRepository repository;
 
     @Override
-    public StatisticDto addStatsInfo(StatisticDto dto) {
-        StatisticEntity entity = mapper.toEntity(dto);
+    public EndpointHit addStatsInfo(EndpointHit dto) {
+        EndpointHitEntity entity = mapper.toEntity(dto);
         return mapper.toDto(repository.save(entity));
     }
 
     @Override
-    public List<ResponseStatisticDto> statisticsOutput(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
-        List<ResponseStatisticDto> views;
+    public List<ViewStats> statisticsOutput(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
+        List<ViewStats> views;
         if (unique) {
             if (uris.length != 0) {
                 views = repository.getStatisticForACertainTimeWithUniqueIpAndUri(uris, start, end);

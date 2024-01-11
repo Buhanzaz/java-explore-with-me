@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.dto.ResponseStatisticDto;
-import ru.practicum.dto.StatisticDto;
+import ru.practicum.dto.ViewStats;
+import ru.practicum.dto.EndpointHit;
 import ru.practicum.service.ServerService;
 
 import java.time.LocalDateTime;
@@ -35,19 +35,19 @@ class ServerControllerTest {
     private final ServerService service;
     private final MockMvc mockMvc;
     final ObjectMapper objectMapper;
-    private static List<ResponseStatisticDto> responseStatisticDtoTest;
-    private static StatisticDto statisticDtoTest;
+    private static List<ViewStats> viewStatsTest;
+    private static EndpointHit endpointHitTest;
 
     @BeforeAll
     static void setUp() {
-        statisticDtoTest = StatisticDto.builder()
+        endpointHitTest = EndpointHit.builder()
                 .app("ewm-main-service")
                 .uri("/events")
                 .ip("121.0.0.1")
                 .timestamp(LocalDateTime.of(2023, 12, 23, 0, 0, 0))
                 .build();
 
-        responseStatisticDtoTest = List.of(ResponseStatisticDto.builder()
+        viewStatsTest = List.of(ViewStats.builder()
                 .app("ewm-main-service")
                 .uri("/events/1")
                 .hits(6L)
@@ -57,19 +57,19 @@ class ServerControllerTest {
     @Test
     @SneakyThrows
     void saveInformationAboutEndpoint() {
-        when(service.addStatsInfo(any(StatisticDto.class))).thenReturn(statisticDtoTest);
+        when(service.addStatsInfo(any(EndpointHit.class))).thenReturn(endpointHitTest);
 
         String result = mockMvc.perform(post("/hit")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(statisticDtoTest)))
+                        .content(objectMapper.writeValueAsString(endpointHitTest)))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        StatisticDto statisticDto = objectMapper.readValue(result, StatisticDto.class);
+        EndpointHit endpointHit = objectMapper.readValue(result, EndpointHit.class);
 
-        assertEquals(statisticDto, statisticDtoTest);
+        assertEquals(endpointHit, endpointHitTest);
     }
 
     @Test
@@ -77,7 +77,7 @@ class ServerControllerTest {
     void getInformationAboutEndpoint() {
         when(service.statisticsOutput(any(LocalDateTime.class), any(LocalDateTime.class),
                 any(String[].class), anyBoolean()))
-                .thenReturn(responseStatisticDtoTest);
+                .thenReturn(viewStatsTest);
 
         String result = mockMvc.perform(get("/stats")
                         .param("start", "2022-09-06 11:00:23")
@@ -88,7 +88,7 @@ class ServerControllerTest {
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
-        String testEqualsDto = objectMapper.writeValueAsString(responseStatisticDtoTest);
+        String testEqualsDto = objectMapper.writeValueAsString(viewStatsTest);
 
         assertEquals(testEqualsDto, result);
 

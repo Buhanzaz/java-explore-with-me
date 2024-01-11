@@ -1,12 +1,12 @@
 package ru.practicum.mapper;
 
 import org.mapstruct.Mapper;
-import ru.practicum.dto.StatisticDto;
-import ru.practicum.model.StatisticEntity;
+import ru.practicum.dto.EndpointHit;
+import ru.practicum.model.EndpointHitEntity;
 
 @Mapper(componentModel = "spring")
 public interface StatsServerMapper {
-    StatisticDto toDto(StatisticEntity entity);
+    EndpointHit toDto(EndpointHitEntity entity);
 
-    StatisticEntity toEntity(StatisticDto dto);
+    EndpointHitEntity toEntity(EndpointHit dto);
 }
