@@ -2,10 +2,10 @@ package ru.practicum.models.events.model.entities;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.models.categories.models.entities.CategoryEntity;
+import ru.practicum.models.categories.model.entities.CategoryEntity;
 import ru.practicum.enums.State;
-import ru.practicum.models.compilations.Locations.model.entities.LocationEntity;
-import ru.practicum.models.users.entities.UserEntity;
+import ru.practicum.models.Locations.model.entities.LocationEntity;
+import ru.practicum.models.users.model.entities.UserEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

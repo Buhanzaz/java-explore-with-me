@@ -2,14 +2,14 @@ package ru.practicum.models.events.model.dtos;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
-import ru.practicum.models.compilations.Locations.model.dtos.LocationDto;
+import ru.practicum.models.Locations.model.dtos.LocationDto;
 import ru.practicum.models.events.model.entities.EventEntity;
 
 import javax.validation.constraints.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import static ru.practicum.variables.StaticVariables.FORMATTER;
+import static ru.practicum.utils.variables.StaticVariables.FORMATTER;
 
 /**
  * DTO for {@link EventEntity}

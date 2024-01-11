@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
 @RestControllerAdvice
 public class ErrorHandler {
     @ExceptionHandler({MethodArgumentNotValidException.class, MissingServletRequestParameterException.class,
-            DataAndTimeException.class, EnumException.class})
+            DataAndTimeException.class, EnumException.class, ClientStatisticsException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handlerBadRequest(final Exception exception) {
         log.debug("Получен статус 404 Bad request {}", exception.getMessage(), exception);

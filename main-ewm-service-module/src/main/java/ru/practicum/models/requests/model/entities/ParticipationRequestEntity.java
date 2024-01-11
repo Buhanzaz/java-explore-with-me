@@ -4,7 +4,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.enums.Status;
 import ru.practicum.models.events.model.entities.EventEntity;
-import ru.practicum.models.users.entities.UserEntity;
+import ru.practicum.models.users.model.entities.UserEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

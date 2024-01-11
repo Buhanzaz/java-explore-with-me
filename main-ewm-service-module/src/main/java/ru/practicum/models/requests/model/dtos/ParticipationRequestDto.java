@@ -8,7 +8,7 @@ import ru.practicum.models.requests.model.entities.ParticipationRequestEntity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import static ru.practicum.variables.StaticVariables.FORMATTER;
+import static ru.practicum.utils.variables.StaticVariables.FORMATTER;
 
 /**
  * DTO for {@link ParticipationRequestEntity}

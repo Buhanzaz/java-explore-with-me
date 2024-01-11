@@ -7,7 +7,7 @@ import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
 
-import static ru.practicum.variables.StaticVariables.FORMATTER;
+import static ru.practicum.utils.variables.StaticVariables.FORMATTER;
 
 @Data
 @Builder
