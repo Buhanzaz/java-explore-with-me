@@ -49,8 +49,10 @@ class PrivateEventServiceImpl implements PrivateEventService {
     @Override
     public EventFullDto addEvent(Long userId, NewEventDto newEventDto) {
         EventEntity saveEntity;
-        UserEntity userEntity = userRepository.findById(userId).orElseThrow();
-        CategoryEntity categoryEntity = categoryRepository.findById(newEventDto.getCategory()).orElseThrow();
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Not found user"));
+        CategoryEntity categoryEntity = categoryRepository.findById(newEventDto.getCategory())
+                .orElseThrow(() -> new NotFoundException("Not found category"));
         LocalDateTime time = newEventDto.getEventDate();
 
         if (time.isBefore(LocalDateTime.now().plusHours(2))) {
@@ -76,7 +78,8 @@ class PrivateEventServiceImpl implements PrivateEventService {
 
     @Override
     public EventFullDto getEventForOwner(Long userId, Long eventId) {
-        return eventMapper.toDto(eventRepository.findFirstByInitiator_IdAndId(userId, eventId).orElseThrow());
+        return eventMapper.toDto(eventRepository.findFirstByInitiator_IdAndId(userId, eventId)
+                .orElseThrow(() -> new NotFoundException("Not found event")));
     }
 
     @Override
@@ -106,7 +109,8 @@ class PrivateEventServiceImpl implements PrivateEventService {
     private EventEntity update(UpdateEventUserRequest updateEventsDto, EventEntity eventEntity) {
         EventEntity updatedEvent = eventMapper.updateForUser(updateEventsDto, eventEntity);
         if (updateEventsDto.getCategory() != null) {
-            CategoryEntity categoryEntity = categoryRepository.findById(updateEventsDto.getCategory()).orElseThrow();
+            CategoryEntity categoryEntity = categoryRepository.findById(updateEventsDto.getCategory())
+                    .orElseThrow(() -> new NotFoundException("Not found category"));
             updatedEvent.setCategory(categoryEntity);
         }
 

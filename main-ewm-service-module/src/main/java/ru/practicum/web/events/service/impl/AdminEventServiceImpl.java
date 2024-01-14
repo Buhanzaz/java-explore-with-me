@@ -89,7 +89,8 @@ class AdminEventServiceImpl implements AdminEventService {
                 updatedEvent = eventMapper.updateForAdmin(updateEventAdminRequest, eventEntity);
 
                 if (updateEventAdminRequest.getCategory() != null) {
-                    CategoryEntity categoryEntity = categoryRepository.findById(updateEventAdminRequest.getCategory()).orElseThrow();
+                    CategoryEntity categoryEntity = categoryRepository.findById(updateEventAdminRequest.getCategory())
+                            .orElseThrow(() -> new NotFoundException("Not found category"));
                     updatedEvent.setCategory(categoryEntity);
                 }
 

@@ -31,10 +31,4 @@ public interface EventMapper {
     @Mapping(source = "category", target = "category.id", ignore = true)
     @Mapping(source = "stateAction", target = "state", ignore = true)
     EventEntity updateForAdmin(UpdateEventAdminRequest updateEventAdminRequest, @MappingTarget EventEntity eventEntity);
-//    @InheritInverseConfiguration(name = "toEntityNotNullEvents")
-//    NewEventDto toDto(EventEntity eventEntity);
-//
-//    @InheritConfiguration(name = "toEntityNotNullEvents")
-//    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-//    EventEntity updateForUser(NewEventDto newEventDto, @MappingTarget EventEntity eventEntity);
 }

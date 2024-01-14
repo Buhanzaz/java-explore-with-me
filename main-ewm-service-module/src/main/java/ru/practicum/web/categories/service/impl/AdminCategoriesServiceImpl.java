@@ -3,6 +3,7 @@ package ru.practicum.web.categories.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.exceptons.excepton.NotFoundException;
 import ru.practicum.mappers.categories.mapper.CategoryMapper;
 import ru.practicum.web.categories.service.AdminCategoriesService;
 import ru.practicum.models.categories.model.dtos.CategoryDto;
@@ -31,11 +32,10 @@ class AdminCategoriesServiceImpl implements AdminCategoriesService {
         repository.deleteById(catId);
     }
 
-    //TODO нужно в этом месте внимательно настроить транзакции
     @Override
     public CategoryDto updateCategory(Long catId, CategoryDto categoryDto) {
-        //TODO Нужно в orElseThrow добавить нормальную генерацию ошибки
-        CategoryEntity categoryEntity = repository.findById(catId).orElseThrow();
+        CategoryEntity categoryEntity = repository.findById(catId)
+                .orElseThrow(() -> new NotFoundException("Not found category"));
         mapper.updateCategoryEntity(categoryEntity, categoryDto);
         return mapper.toDto(categoryEntity);
     }

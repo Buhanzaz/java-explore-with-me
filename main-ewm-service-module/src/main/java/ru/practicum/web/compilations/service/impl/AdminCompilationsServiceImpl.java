@@ -3,6 +3,7 @@ package ru.practicum.web.compilations.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.exceptons.excepton.NotFoundException;
 import ru.practicum.mappers.compilations.mapper.CompilationMapper;
 import ru.practicum.models.compilations.model.dtos.CompilationDto;
 import ru.practicum.models.compilations.model.dtos.NewCompilationDto;
@@ -46,7 +47,8 @@ public class AdminCompilationsServiceImpl implements AdminCompilationsService {
 
     @Override
     public CompilationDto patchCompilation(Long compId, UpdateCompilationRequest updateCompilation) {
-        CompilationEntity entity = compilationRepository.findById(compId).orElseThrow();
+        CompilationEntity entity = compilationRepository.findById(compId)
+                .orElseThrow(() -> new NotFoundException("Not found compilation"));
         CompilationEntity compilationUpdated = compilationMapper.partialUpdate(updateCompilation, entity);
         if (updateCompilation.getEvents() != null) {
             List<EventEntity> allById = eventRepository.findAllById(updateCompilation.getEvents());

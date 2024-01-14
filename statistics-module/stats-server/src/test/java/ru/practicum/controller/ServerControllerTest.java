@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.dto.ViewStats;
 import ru.practicum.dto.EndpointHit;
+import ru.practicum.dto.ViewStats;
 import ru.practicum.service.ServerService;
 
 import java.time.LocalDateTime;

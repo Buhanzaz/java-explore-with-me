@@ -1,7 +1,6 @@
 package ru.practicum.models.users.model.dtos;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Value;
 import ru.practicum.models.users.model.entities.UserEntity;
 
