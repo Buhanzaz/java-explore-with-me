@@ -8,9 +8,6 @@ import ru.practicum.mappers.users.mapper.UserMapper;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {LocationMapper.class, CategoryMapper.class, UserMapper.class})
 public interface EventMapper {
-    @Mapping(target = "category", ignore = true)
-    EventEntity toEntity(NewEventDto newEventDto);
-
     EventEntity toEntity(EventFullDto eventFullDto);
 
     EventFullDto toDto(EventEntity eventEntity);

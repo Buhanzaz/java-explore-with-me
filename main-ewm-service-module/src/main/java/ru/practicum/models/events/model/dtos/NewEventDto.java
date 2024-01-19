@@ -30,6 +30,7 @@ public class NewEventDto implements Serializable {
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FORMATTER)
     private LocalDateTime eventDate;
+    @NotNull
     private LocationDto location;
     private Boolean paid;
     @PositiveOrZero
