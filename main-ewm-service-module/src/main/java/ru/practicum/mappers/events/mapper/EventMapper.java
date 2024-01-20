@@ -6,18 +6,16 @@ import ru.practicum.models.events.model.dtos.*;
 import ru.practicum.models.events.model.entities.EventEntity;
 import ru.practicum.mappers.users.mapper.UserMapper;
 
+import java.util.List;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING, uses = {LocationMapper.class, CategoryMapper.class, UserMapper.class})
 public interface EventMapper {
-    EventEntity toEntity(EventFullDto eventFullDto);
 
-    EventFullDto toDto(EventEntity eventEntity);
+    EventFullDto toFullDto(EventEntity eventEntity);
 
-    EventEntity toEntity(EventShortDto eventShortDto);
+    ReviewEventFullDto toReviewDto(EventEntity eventEntity);
 
     EventShortDto toShortDto(EventEntity eventEntity);
-
-    @Mapping(source = "category", target = "category.id")
-    EventEntity toEntity(UpdateEventUserRequest updateEventUserRequest);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(source = "category", target = "category.id", ignore = true)
@@ -28,4 +26,6 @@ public interface EventMapper {
     @Mapping(source = "category", target = "category.id", ignore = true)
     @Mapping(source = "stateAction", target = "state", ignore = true)
     EventEntity updateForAdmin(UpdateEventAdminRequest updateEventAdminRequest, @MappingTarget EventEntity eventEntity);
+
+    List<EventFullDto> toDtoList(List<EventEntity> entities);
 }

@@ -5,11 +5,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.models.events.model.dtos.*;
 import ru.practicum.web.events.service.PrivateEventService;
-import ru.practicum.models.events.model.dtos.EventFullDto;
-import ru.practicum.models.events.model.dtos.EventShortDto;
-import ru.practicum.models.events.model.dtos.NewEventDto;
-import ru.practicum.models.events.model.dtos.UpdateEventUserRequest;
 import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateRequest;
 import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateResult;
 import ru.practicum.models.requests.model.dtos.ParticipationRequestDto;
@@ -43,7 +40,7 @@ public class PrivateEventController {
     }
 
     @GetMapping("/events/{eventId}")
-    public EventFullDto getEventForOwner(@PathVariable Long userId, @PathVariable Long eventId) {
+    public ReviewEventFullDto getEventForOwner(@PathVariable Long userId, @PathVariable Long eventId) {
         return service.getEventForOwner(userId, eventId);
     }
 

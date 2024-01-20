@@ -1,6 +1,8 @@
 package ru.practicum.models.Locations.model.entities;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -9,6 +11,8 @@ import javax.persistence.*;
 @Setter
 @Entity
 @Table(name = "location")
+@AllArgsConstructor
+@NoArgsConstructor
 public class LocationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,6 +1,6 @@
 create table if not exists categories
 (
-    id   bigint generated always as identity primary key ,
+    id   bigint generated always as identity primary key,
     name varchar(50) not null
 
 );
@@ -62,6 +62,14 @@ create table if not exists users
     name  varchar(250) not null
 );
 
+create table if not exists comments
+(
+    id       bigint generated always as identity primary key,
+    event_id bigint        not null,
+    field    varchar(250)  not null,
+    comment  varchar(2500) not null
+);
+
 alter table if exists categories
     add constraint UK_NAME unique (name);
 
@@ -105,3 +113,8 @@ alter table if exists participation_request
     add constraint FK_REQUESTER_ID
         foreign key (requester_id)
             references users;
+
+alter table if exists comments
+    add constraint FK_EVENT_ID_FOR_COMMENTS
+        foreign key (event_id)
+            references events;

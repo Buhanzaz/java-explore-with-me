@@ -1,6 +1,8 @@
 package ru.practicum.models.compilations.model.dtos;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.models.compilations.model.entities.CompilationEntity;
 
 import javax.validation.constraints.NotBlank;
@@ -12,7 +14,8 @@ import java.util.List;
  * DTO for {@link CompilationEntity}
  */
 
-@Data
+@Getter
+@Setter
 public class NewCompilationDto implements Serializable {
     List<Long> events;
     Boolean pinned = false;

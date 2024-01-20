@@ -11,14 +11,14 @@ import ru.practicum.exceptons.excepton.ConflictException;
 import ru.practicum.exceptons.excepton.DataAndTimeException;
 import ru.practicum.exceptons.excepton.EnumException;
 import ru.practicum.exceptons.excepton.NotFoundException;
+import ru.practicum.mappers.comments.mapper.CommentMapper;
 import ru.practicum.mappers.events.mapper.EventMapper;
 import ru.practicum.mappers.events.mapper.LocationMapper;
 import ru.practicum.mappers.requests.mapper.RequestMapper;
 import ru.practicum.models.categories.model.entities.CategoryEntity;
-import ru.practicum.models.events.model.dtos.EventFullDto;
-import ru.practicum.models.events.model.dtos.EventShortDto;
-import ru.practicum.models.events.model.dtos.NewEventDto;
-import ru.practicum.models.events.model.dtos.UpdateEventUserRequest;
+import ru.practicum.models.comments.model.dtos.CommentDto;
+import ru.practicum.models.comments.model.entities.CommentEntity;
+import ru.practicum.models.events.model.dtos.*;
 import ru.practicum.models.events.model.entities.EventEntity;
 import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateRequest;
 import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateResult;
@@ -26,6 +26,7 @@ import ru.practicum.models.requests.model.dtos.ParticipationRequestDto;
 import ru.practicum.models.requests.model.entities.ParticipationRequestEntity;
 import ru.practicum.models.users.model.entities.UserEntity;
 import ru.practicum.web.categories.repository.CategoryRepository;
+import ru.practicum.web.events.repository.CommentRepository;
 import ru.practicum.web.events.repository.EventRepository;
 import ru.practicum.web.events.service.PrivateEventService;
 import ru.practicum.web.requests.repository.RequestRepository;
@@ -48,6 +49,8 @@ class PrivateEventServiceImpl implements PrivateEventService {
     private final EventMapper eventMapper;
     private final RequestMapper requestMapper;
     private final LocationMapper locationMapper;
+    private final CommentRepository commentRepository;
+    private final CommentMapper commentMapper;
 
     @Override
     public EventFullDto addEvent(Long userId, NewEventDto newEventDto) {
@@ -82,7 +85,7 @@ class PrivateEventServiceImpl implements PrivateEventService {
             saveEntity = eventRepository.save(eventEntity);
         }
 
-        return eventMapper.toDto(saveEntity);
+        return eventMapper.toFullDto(saveEntity);
     }
 
     @Override
@@ -93,9 +96,19 @@ class PrivateEventServiceImpl implements PrivateEventService {
     }
 
     @Override
-    public EventFullDto getEventForOwner(Long userId, Long eventId) {
-        return eventMapper.toDto(eventRepository.findFirstByInitiator_IdAndId(userId, eventId)
-                .orElseThrow(() -> new NotFoundException("Not found event")));
+    public ReviewEventFullDto getEventForOwner(Long userId, Long eventId) {
+        EventEntity eventEntity = eventRepository.findFirstByInitiator_IdAndId(userId, eventId)
+                .orElseThrow(() -> new NotFoundException("Not found event"));
+        List<CommentDto> commentDtoList = commentMapper.toDtoList(commentRepository.findAllByEvent_Id(eventEntity.getId()));
+
+        if (commentDtoList.isEmpty()) {
+            return eventMapper.toReviewDto(eventEntity);
+        }
+
+        ReviewEventFullDto reviewDto = eventMapper.toReviewDto(eventEntity);
+
+        reviewDto.setComments(commentDtoList);
+        return reviewDto;
     }
 
     @Override
@@ -119,7 +132,7 @@ class PrivateEventServiceImpl implements PrivateEventService {
         } else {
             throw new ConflictException("You don't have the rights to publish, send the event for review");
         }
-        return eventMapper.toDto(updatedEvent);
+        return eventMapper.toFullDto(updatedEvent);
     }
 
     private EventEntity update(UpdateEventUserRequest updateEventsDto, EventEntity eventEntity) {

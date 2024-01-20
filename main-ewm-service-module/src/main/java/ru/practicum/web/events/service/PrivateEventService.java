@@ -1,10 +1,7 @@
 package ru.practicum.web.events.service;
 
 import org.springframework.data.domain.Pageable;
-import ru.practicum.models.events.model.dtos.EventFullDto;
-import ru.practicum.models.events.model.dtos.EventShortDto;
-import ru.practicum.models.events.model.dtos.NewEventDto;
-import ru.practicum.models.events.model.dtos.UpdateEventUserRequest;
+import ru.practicum.models.events.model.dtos.*;
 import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateRequest;
 import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateResult;
 import ru.practicum.models.requests.model.dtos.ParticipationRequestDto;
@@ -16,7 +13,7 @@ public interface PrivateEventService {
 
     List<EventShortDto> getEventsForOwner(Long userId, Pageable pageable);
 
-    EventFullDto getEventForOwner(Long userId, Long eventId);
+    ReviewEventFullDto getEventForOwner(Long userId, Long eventId);
 
     EventFullDto ownerUpdateEvent(Long userId, Long eventId, UpdateEventUserRequest updateEventsDto);
 
