@@ -9,13 +9,13 @@ import ru.practicum.models.users.model.entities.UserEntity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "events")
 @Builder
+@AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class EventEntity {
@@ -45,7 +45,7 @@ public class EventEntity {
     UserEntity initiator;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "location_id", referencedColumnName = "id", nullable = false)
+    @JoinColumn(name = "location_id", referencedColumnName = "id")
     LocationEntity location;
 
     Boolean paid;
@@ -62,23 +62,4 @@ public class EventEntity {
     String title;
 
     Long views;
-
-    public EventEntity(Long id, String annotation, CategoryEntity category, Long confirmedRequests, LocalDateTime createdOn, String description, LocalDateTime eventDate, UserEntity initiator, LocationEntity location, Boolean paid, Integer participantLimit, LocalDateTime publishedOn, Boolean requestModeration, State state, String title, Long views) {
-        this.id = id;
-        this.annotation = annotation;
-        this.category = category;
-        this.confirmedRequests = Objects.requireNonNullElse(confirmedRequests, 0L);
-        this.createdOn = Objects.requireNonNullElseGet(createdOn, LocalDateTime::now);
-        this.description = description;
-        this.eventDate = eventDate;
-        this.initiator = initiator;
-        this.location = location;
-        this.paid = Objects.requireNonNullElse(paid, false);
-        this.participantLimit = Objects.requireNonNullElse(participantLimit, 0);
-        this.publishedOn = publishedOn;
-        this.requestModeration = Objects.requireNonNullElse(requestModeration, true);
-        this.title = title;
-        this.views = Objects.requireNonNullElse(views, 0L);
-        this.state = Objects.requireNonNullElse(state, State.PENDING);
-    }
 }

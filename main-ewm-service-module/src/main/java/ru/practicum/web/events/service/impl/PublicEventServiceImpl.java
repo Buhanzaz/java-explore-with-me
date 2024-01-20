@@ -9,15 +9,15 @@ import ru.practicum.dto.EndpointHit;
 import ru.practicum.dto.ViewStats;
 import ru.practicum.enums.Sort;
 import ru.practicum.enums.State;
-import ru.practicum.mappers.events.mapper.EventMapper;
-import ru.practicum.web.events.repository.EventRepository;
-import ru.practicum.web.events.service.PublicEventService;
 import ru.practicum.exceptons.excepton.ClientStatisticsException;
 import ru.practicum.exceptons.excepton.DataAndTimeException;
 import ru.practicum.exceptons.excepton.NotFoundException;
+import ru.practicum.mappers.events.mapper.EventMapper;
 import ru.practicum.models.events.model.dtos.EventFullDto;
 import ru.practicum.models.events.model.dtos.EventShortDto;
 import ru.practicum.models.events.model.entities.EventEntity;
+import ru.practicum.web.events.repository.EventRepository;
+import ru.practicum.web.events.service.PublicEventService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -40,6 +40,7 @@ class PublicEventServiceImpl implements PublicEventService {
     private final EventMapper eventMapper;
     private final EntityManager entityManager;
     private final ClientStatistics clientStatistics;
+
     @Override
     @Transactional
     public EventFullDto getEvent(Long id, HttpServletRequest request) {
@@ -99,13 +100,6 @@ class PublicEventServiceImpl implements PublicEventService {
                 .setFirstResult(from)
                 .setMaxResults(size)
                 .getResultList();
-
-
-        if (onlyAvailable) {
-            eventEntityList = eventEntityList.stream()
-                    .filter((event -> event.getConfirmedRequests() < (long) event.getParticipantLimit()))
-                    .collect(Collectors.toList());
-        }
 
 
         if (eventEntityList.isEmpty()) {

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.exceptons.excepton.NotFoundException;
 import ru.practicum.mappers.categories.mapper.CategoryMapper;
 import ru.practicum.web.categories.service.PublicCategoriesService;
 import ru.practicum.models.categories.model.dtos.CategoryDto;
@@ -33,10 +34,10 @@ class PublicCategoriesServiceImpl implements PublicCategoriesService {
                 .collect(Collectors.toList()) : Collections.emptyList();
     }
 
-    //TODO Решить проблему с orElseThrow
     @Override
     public CategoryDto getCategoryById(Long catId) {
-        CategoryEntity entity = repository.findById(catId).orElseThrow();
+        CategoryEntity entity = repository.findById(catId)
+                .orElseThrow(() -> new NotFoundException("Not found category"));
 
         return mapper.toDto(entity);
     }

@@ -3,6 +3,7 @@ package ru.practicum.web.users.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.exceptons.excepton.NotFoundException;
 import ru.practicum.mappers.users.mapper.UserMapper;
 import ru.practicum.models.users.model.dtos.NewUserRequest;
 import ru.practicum.models.users.model.dtos.UserDto;
@@ -48,6 +49,7 @@ class AdminUserServiceImpl implements AdminService {
 
     @Override
     public UserDto getUser(Long userId) {
-        return userMapper.toDto(userRepository.findById(userId).orElseThrow());
+        return userMapper.toDto(userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Not found user")));
     }
 }

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.enums.State;
+import ru.practicum.exceptons.excepton.NotFoundException;
 import ru.practicum.models.events.model.entities.EventEntity;
 import ru.practicum.web.events.repository.EventRepository;
 import ru.practicum.exceptons.excepton.ConflictException;
@@ -39,8 +40,10 @@ class PrivateUserRequestServiceImpl implements PrivateUserRequestService {
 
     @Override
     public ParticipationRequestDto participationRequest(Long userId, Long eventId) {
-        UserEntity userEntity = userRepository.findById(userId).orElseThrow();
-        EventEntity eventEntity = eventRepository.findById(eventId).orElseThrow();
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Not found user"));
+        EventEntity eventEntity = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Not found event"));
 
         if (eventEntity.getState().equals(State.PUBLISHED)) {
             if (!eventEntity.getInitiator().equals(userEntity)) {
@@ -80,8 +83,10 @@ class PrivateUserRequestServiceImpl implements PrivateUserRequestService {
 
     @Override
     public ParticipationRequestDto cancelParticipationRequest(Long userId, Long requestId) {
-        ParticipationRequestEntity requestEntity = requestRepository.findFirstByRequester_IdAndId(userId, requestId).orElseThrow();
-        EventEntity eventEntity = eventRepository.findById(requestEntity.getEvent().getId()).orElseThrow();
+        ParticipationRequestEntity requestEntity = requestRepository.findFirstByRequester_IdAndId(userId, requestId)
+                .orElseThrow(() -> new NotFoundException("Not found participation request"));
+        EventEntity eventEntity = eventRepository.findById(requestEntity.getEvent().getId())
+                .orElseThrow(() -> new NotFoundException("Not found event"));
 
         if (requestEntity.getStatus().equals(Status.PENDING)) {
             requestEntity.setStatus(Status.CANCELED);

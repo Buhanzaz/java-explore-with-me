@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.practicum.dto.ViewStats;
 import ru.practicum.dto.EndpointHit;
+import ru.practicum.dto.ViewStats;
 
 import java.time.LocalDateTime;
 import java.util.List;

@@ -3,6 +3,7 @@ package ru.practicum.web.compilations.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.exceptons.excepton.NotFoundException;
 import ru.practicum.mappers.compilations.mapper.CompilationMapper;
 import ru.practicum.models.compilations.model.dtos.CompilationDto;
 import ru.practicum.models.compilations.model.entities.CompilationEntity;
@@ -19,7 +20,8 @@ public class PublicCompilationsServiceImpl implements PublicCompilationsService 
 
     @Override
     public CompilationDto getCompilationById(Long compId) {
-        CompilationEntity entity = compilationRepository.findById(compId).orElseThrow();
+        CompilationEntity entity = compilationRepository.findById(compId)
+                .orElseThrow(() -> new NotFoundException("Not found compilation"));
 
         return compilationMapper.toDto(entity);
     }

@@ -5,8 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import ru.practicum.dto.EndpointHit;
-import ru.practicum.mapper.StatsServerMapper;
 import ru.practicum.dto.ViewStats;
+import ru.practicum.exceptons.excepton.DataAndTimeException;
+import ru.practicum.mapper.StatsServerMapper;
 import ru.practicum.model.EndpointHitEntity;
 import ru.practicum.repository.ServerStatsRepository;
 
@@ -30,6 +31,11 @@ public class ServerServiceImpl implements ServerService {
     @Override
     public List<ViewStats> statisticsOutput(LocalDateTime start, LocalDateTime end, String[] uris, boolean unique) {
         List<ViewStats> views;
+
+        if (start.isAfter(end) || start.equals(end)) {
+            throw new DataAndTimeException("The date was entered incorrectly");
+        }
+
         if (unique) {
             if (uris.length != 0) {
                 views = repository.getStatisticForACertainTimeWithUniqueIpAndUri(uris, start, end);

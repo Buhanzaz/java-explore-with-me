@@ -4,35 +4,37 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.models.categories.model.entities.CategoryEntity;
-import ru.practicum.web.categories.repository.CategoryRepository;
 import ru.practicum.enums.State;
 import ru.practicum.enums.StateActionForUsers;
+import ru.practicum.enums.Status;
+import ru.practicum.exceptons.excepton.ConflictException;
+import ru.practicum.exceptons.excepton.DataAndTimeException;
+import ru.practicum.exceptons.excepton.EnumException;
+import ru.practicum.exceptons.excepton.NotFoundException;
 import ru.practicum.mappers.events.mapper.EventMapper;
+import ru.practicum.mappers.events.mapper.LocationMapper;
+import ru.practicum.mappers.requests.mapper.RequestMapper;
+import ru.practicum.models.categories.model.entities.CategoryEntity;
 import ru.practicum.models.events.model.dtos.EventFullDto;
 import ru.practicum.models.events.model.dtos.EventShortDto;
 import ru.practicum.models.events.model.dtos.NewEventDto;
 import ru.practicum.models.events.model.dtos.UpdateEventUserRequest;
 import ru.practicum.models.events.model.entities.EventEntity;
-import ru.practicum.web.events.repository.EventRepository;
-import ru.practicum.web.events.service.PrivateEventService;
-import ru.practicum.exceptons.excepton.ConflictException;
-import ru.practicum.exceptons.excepton.DataAndTimeException;
-import ru.practicum.exceptons.excepton.EnumException;
-import ru.practicum.exceptons.excepton.NotFoundException;
-import ru.practicum.enums.Status;
 import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateRequest;
 import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateResult;
 import ru.practicum.models.requests.model.dtos.ParticipationRequestDto;
 import ru.practicum.models.requests.model.entities.ParticipationRequestEntity;
 import ru.practicum.models.users.model.entities.UserEntity;
-import ru.practicum.mappers.requests.mapper.RequestMapper;
+import ru.practicum.web.categories.repository.CategoryRepository;
+import ru.practicum.web.events.repository.EventRepository;
+import ru.practicum.web.events.service.PrivateEventService;
 import ru.practicum.web.requests.repository.RequestRepository;
 import ru.practicum.web.users.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,21 +47,37 @@ class PrivateEventServiceImpl implements PrivateEventService {
     private final RequestRepository requestRepository;
     private final EventMapper eventMapper;
     private final RequestMapper requestMapper;
+    private final LocationMapper locationMapper;
 
     @Override
     public EventFullDto addEvent(Long userId, NewEventDto newEventDto) {
         EventEntity saveEntity;
-        UserEntity userEntity = userRepository.findById(userId).orElseThrow();
-        CategoryEntity categoryEntity = categoryRepository.findById(newEventDto.getCategory()).orElseThrow();
+        UserEntity userEntity = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Not found user"));
+        CategoryEntity categoryEntity = categoryRepository.findById(newEventDto.getCategory())
+                .orElseThrow(() -> new NotFoundException("Not found category"));
         LocalDateTime time = newEventDto.getEventDate();
 
         if (time.isBefore(LocalDateTime.now().plusHours(2))) {
             throw new DataAndTimeException("You can change the event no earlier than two hours before the start");
         } else {
-            EventEntity eventEntity = eventMapper.toEntity(newEventDto);
-
-            eventEntity.setCategory(categoryEntity);
-            eventEntity.setInitiator(userEntity);
+            EventEntity eventEntity = EventEntity.builder()
+                    .annotation(newEventDto.getAnnotation())
+                    .category(categoryEntity)
+                    .confirmedRequests(0L)
+                    .createdOn(LocalDateTime.now())
+                    .description(newEventDto.getDescription())
+                    .eventDate(newEventDto.getEventDate())
+                    .initiator(userEntity)
+                    .location(locationMapper.toEntity(newEventDto.getLocation()))
+                    .paid(Objects.requireNonNullElse(newEventDto.getPaid(), false))
+                    .participantLimit(Objects.requireNonNullElse(newEventDto.getParticipantLimit(), 0))
+                    .publishedOn(null)
+                    .requestModeration(Objects.requireNonNullElse(newEventDto.getRequestModeration(), true))
+                    .title(newEventDto.getTitle())
+                    .views(0L)
+                    .state(State.PENDING)
+                    .build();
 
             saveEntity = eventRepository.save(eventEntity);
         }
@@ -76,7 +94,8 @@ class PrivateEventServiceImpl implements PrivateEventService {
 
     @Override
     public EventFullDto getEventForOwner(Long userId, Long eventId) {
-        return eventMapper.toDto(eventRepository.findFirstByInitiator_IdAndId(userId, eventId).orElseThrow());
+        return eventMapper.toDto(eventRepository.findFirstByInitiator_IdAndId(userId, eventId)
+                .orElseThrow(() -> new NotFoundException("Not found event")));
     }
 
     @Override
@@ -106,7 +125,8 @@ class PrivateEventServiceImpl implements PrivateEventService {
     private EventEntity update(UpdateEventUserRequest updateEventsDto, EventEntity eventEntity) {
         EventEntity updatedEvent = eventMapper.updateForUser(updateEventsDto, eventEntity);
         if (updateEventsDto.getCategory() != null) {
-            CategoryEntity categoryEntity = categoryRepository.findById(updateEventsDto.getCategory()).orElseThrow();
+            CategoryEntity categoryEntity = categoryRepository.findById(updateEventsDto.getCategory())
+                    .orElseThrow(() -> new NotFoundException("Not found category"));
             updatedEvent.setCategory(categoryEntity);
         }
 
