@@ -18,7 +18,7 @@ import static ru.practicum.variables.StaticVariables.FORMATTER;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class StatisticDto {
+public class EndpointHit {
     @NotBlank
     @NotNull
     String app;

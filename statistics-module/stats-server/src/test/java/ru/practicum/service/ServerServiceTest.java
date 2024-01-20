@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import ru.practicum.dto.ResponseStatisticDto;
-import ru.practicum.dto.StatisticDto;
+import ru.practicum.dto.EndpointHit;
+import ru.practicum.dto.ViewStats;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,19 +26,19 @@ class ServerServiceTest {
     @MockBean
     private final ServerService service;
 
-    private static List<ResponseStatisticDto> responseStatisticDtoTest;
-    private static StatisticDto statisticDtoTest;
+    private static List<ViewStats> viewStatsTest;
+    private static EndpointHit endpointHitTest;
 
     @BeforeAll
     static void setUp() {
-        statisticDtoTest = StatisticDto.builder()
+        endpointHitTest = EndpointHit.builder()
                 .app("ewm-main-service")
                 .uri("/events")
                 .ip("121.0.0.1")
                 .timestamp(LocalDateTime.of(2023, 12, 23, 0, 0, 0))
                 .build();
 
-        responseStatisticDtoTest = List.of(ResponseStatisticDto.builder()
+        viewStatsTest = List.of(ViewStats.builder()
                 .app("ewm-main-service")
                 .uri("/events/1")
                 .hits(6L)
@@ -48,22 +48,22 @@ class ServerServiceTest {
 
     @Test
     void addStatsInfo() {
-        when(service.addStatsInfo(any(StatisticDto.class))).thenReturn(statisticDtoTest);
+        when(service.addStatsInfo(any(EndpointHit.class))).thenReturn(endpointHitTest);
 
-        StatisticDto statisticDto = service.addStatsInfo(ServerServiceTest.statisticDtoTest);
+        EndpointHit endpointHit = service.addStatsInfo(ServerServiceTest.endpointHitTest);
 
-        assertEquals(statisticDtoTest, statisticDto);
+        assertEquals(endpointHitTest, endpointHit);
     }
 
     @Test
     void statisticsOutput() {
         when(service.statisticsOutput(any(LocalDateTime.class), any(LocalDateTime.class),
                 any(String[].class), anyBoolean()))
-                .thenReturn(responseStatisticDtoTest);
+                .thenReturn(viewStatsTest);
 
-        List<ResponseStatisticDto> responseStatisticDtos = service.statisticsOutput(
+        List<ViewStats> viewStats = service.statisticsOutput(
                 LocalDateTime.now(), LocalDateTime.now().plusMinutes(1), new String[]{"test"}, true);
 
-        assertEquals(responseStatisticDtoTest, responseStatisticDtos);
+        assertEquals(viewStatsTest, viewStats);
     }
 }
