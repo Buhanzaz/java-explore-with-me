@@ -1,9 +1,10 @@
 package ru.practicum.mappers.comments.mapper;
 
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.ReportingPolicy;
 import ru.practicum.models.comments.model.dtos.CommentDto;
 import ru.practicum.models.comments.model.entities.CommentEntity;
-import ru.practicum.models.events.model.entities.EventEntity;
 
 import java.util.List;
 
@@ -14,5 +15,6 @@ public interface CommentMapper {
     CommentDto toDto(CommentEntity commentEntity);
 
     List<CommentDto> toDtoList(List<CommentEntity> commentEntity);
+
     List<CommentEntity> toEntityList(List<CommentDto> commentEntity);
 }

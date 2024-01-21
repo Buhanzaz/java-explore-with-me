@@ -17,7 +17,6 @@ import ru.practicum.mappers.events.mapper.LocationMapper;
 import ru.practicum.mappers.requests.mapper.RequestMapper;
 import ru.practicum.models.categories.model.entities.CategoryEntity;
 import ru.practicum.models.comments.model.dtos.CommentDto;
-import ru.practicum.models.comments.model.entities.CommentEntity;
 import ru.practicum.models.events.model.dtos.*;
 import ru.practicum.models.events.model.entities.EventEntity;
 import ru.practicum.models.requests.model.dtos.EventRequestStatusUpdateRequest;

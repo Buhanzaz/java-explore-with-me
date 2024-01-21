@@ -1,6 +1,5 @@
 package ru.practicum.models.compilations.model.dtos;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import ru.practicum.models.compilations.model.entities.CompilationEntity;
