@@ -61,10 +61,9 @@ class AdminEventServiceImpl implements AdminEventService {
             criteria = criteriaBuilder.and(criteria, root.get("state").in(states));
         }
 
-        if (categories != null && !categories.isEmpty()) {
-            if (!categories.contains(0L)) {
+        if (categories != null && !categories.isEmpty() && (!categories.contains(0L))) {
                 criteria = criteriaBuilder.and(criteria, root.get("category").in(categories));
-            }
+
         }
 
         criteria = PublicEventServiceImpl.getPredicate(rangeStart, rangeEnd, criteriaBuilder, root, criteria);
@@ -107,8 +106,11 @@ class AdminEventServiceImpl implements AdminEventService {
                 } else if (updateEventAdminRequest.getStateAction() == StateActionForAdmin.REJECT_EVENT) {
                     List<CommentEntity> commentEntityList = commentMapper
                             .toEntityList(updateEventAdminRequest.getCommentsDtoList());
-                    commentEntityList.forEach(commentEntity -> commentEntity.setEvent(eventEntity));
-                    commentRepository.saveAll(commentEntityList);
+
+                    if (commentEntityList != null && !commentEntityList.isEmpty()) {
+                        commentEntityList.forEach(commentEntity -> commentEntity.setEvent(eventEntity));
+                        commentRepository.saveAll(commentEntityList);
+                    }
 
                     updatedEvent.setState(State.CANCELED);
 

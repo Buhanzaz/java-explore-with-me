@@ -71,7 +71,7 @@ create table if not exists comments
 );
 
 alter table if exists categories
-    add constraint UK_NAME unique (name);
+    add constraint UK_NAME_CATEGORIES unique (name);
 
 alter table if exists participation_request
     add constraint UniqueEventAndRequester unique (event_id, requester_id);

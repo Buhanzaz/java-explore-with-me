@@ -14,5 +14,5 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UpdateGroupEventsAdminRequest implements Serializable {
-    Map<Long, UpdateEventAdminRequest> reviewGroup;
+    private Map<Long, UpdateEventAdminRequest> reviewGroup;
 }
