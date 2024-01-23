@@ -22,6 +22,8 @@ alter table if exists participation_request
     drop constraint if exists UniqueEventAndRequester;
 alter table if exists participation_request
     drop constraint if exists FK_REQUESTER_ID;
+alter table if exists categories
+    drop constraint  if exists UK_NAME_CATEGORIES;
 
 create table if not exists categories
 (
