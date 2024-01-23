@@ -1,3 +1,28 @@
+drop table if exists categories cascade;
+drop table if exists comments cascade;
+drop table if exists compilations cascade;
+drop table if exists compilations_events cascade;
+drop table if exists events cascade;
+drop table if exists location cascade;
+drop table if exists participation_request cascade;
+drop table if exists users cascade;
+alter table if exists comments
+    drop constraint if exists FK_EVENT_ID_FOR_COMMENTS;
+alter table if exists compilations_events
+    drop constraint if exists FK_COMPILATION_ID;
+alter table if exists compilations_events
+    drop constraint if exists FK_EVENT_ID_FOR_COMPILATIONS_EVENTS;
+alter table if exists events
+    drop constraint if exists FK_CATEGORY_ID;
+alter table if exists events
+    drop constraint if exists FK_INITIATOR_ID;
+alter table if exists events
+    drop constraint if exists FK_LOCATION_ID;
+alter table if exists participation_request
+    drop constraint if exists UniqueEventAndRequester;
+alter table if exists participation_request
+    drop constraint if exists FK_REQUESTER_ID;
+
 create table if not exists categories
 (
     id   bigint generated always as identity primary key,
