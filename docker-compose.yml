@@ -46,13 +46,13 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
 
-#  pgadmin:
-#    image: dpage/pgadmin4
-#    container_name: pg-admin
-#    depends_on:
-#      - stats-db
-#    ports:
-#      - "5050:80"
-#    environment:
-#      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-root@root.com}
-#      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-root}
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pg-admin
+    depends_on:
+      - stats-db
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-root@root.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-root}
