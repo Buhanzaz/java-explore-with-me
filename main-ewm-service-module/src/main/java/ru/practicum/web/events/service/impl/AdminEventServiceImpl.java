@@ -3,19 +3,24 @@ package ru.practicum.web.events.service.impl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.exceptons.excepton.NotFoundException;
-import ru.practicum.models.categories.model.entities.CategoryEntity;
-import ru.practicum.web.categories.repository.CategoryRepository;
 import ru.practicum.enums.State;
 import ru.practicum.enums.StateActionForAdmin;
-import ru.practicum.mappers.events.mapper.EventMapper;
-import ru.practicum.models.events.model.dtos.EventFullDto;
-import ru.practicum.models.events.model.dtos.UpdateEventAdminRequest;
-import ru.practicum.models.events.model.entities.EventEntity;
-import ru.practicum.web.events.repository.EventRepository;
-import ru.practicum.web.events.service.AdminEventService;
 import ru.practicum.exceptons.excepton.ConflictException;
 import ru.practicum.exceptons.excepton.DataAndTimeException;
+import ru.practicum.exceptons.excepton.NotFoundException;
+import ru.practicum.mappers.comments.mapper.CommentMapper;
+import ru.practicum.mappers.events.mapper.EventMapper;
+import ru.practicum.models.categories.model.entities.CategoryEntity;
+import ru.practicum.models.comments.model.entities.CommentEntity;
+import ru.practicum.models.events.model.dtos.EventFullDto;
+import ru.practicum.models.events.model.dtos.ReviewEventFullDto;
+import ru.practicum.models.events.model.dtos.UpdateEventAdminRequest;
+import ru.practicum.models.events.model.dtos.UpdateGroupEventsAdminRequest;
+import ru.practicum.models.events.model.entities.EventEntity;
+import ru.practicum.web.categories.repository.CategoryRepository;
+import ru.practicum.web.events.repository.CommentRepository;
+import ru.practicum.web.events.repository.EventRepository;
+import ru.practicum.web.events.service.AdminEventService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -35,6 +40,8 @@ class AdminEventServiceImpl implements AdminEventService {
     private final CategoryRepository categoryRepository;
     private final EventMapper eventMapper;
     private final EntityManager entityManager;
+    private final CommentMapper commentMapper;
+    private final CommentRepository commentRepository;
 
     @Override
     public List<EventFullDto> searchEventForAdmin(List<Long> users, List<State> states,
@@ -54,10 +61,9 @@ class AdminEventServiceImpl implements AdminEventService {
             criteria = criteriaBuilder.and(criteria, root.get("state").in(states));
         }
 
-        if (categories != null && !categories.isEmpty()) {
-            if (!categories.contains(0L)) {
+        if (categories != null && !categories.isEmpty() && (!categories.contains(0L))) {
                 criteria = criteriaBuilder.and(criteria, root.get("category").in(categories));
-            }
+
         }
 
         criteria = PublicEventServiceImpl.getPredicate(rangeStart, rangeEnd, criteriaBuilder, root, criteria);
@@ -73,11 +79,11 @@ class AdminEventServiceImpl implements AdminEventService {
             return Collections.emptyList();
         }
 
-        return eventEntityList.stream().map(eventMapper::toDto).collect(Collectors.toList());
+        return eventEntityList.stream().map(eventMapper::toFullDto).collect(Collectors.toList());
     }
 
     @Override
-    public EventFullDto reviewEvent(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
+    public ReviewEventFullDto reviewEvent(Long eventId, UpdateEventAdminRequest updateEventAdminRequest) {
         EventEntity updatedEvent;
         EventEntity eventEntity = eventRepository.findById(eventId).orElseThrow(
                 () -> new NotFoundException("Not found event"));
@@ -98,9 +104,20 @@ class AdminEventServiceImpl implements AdminEventService {
                     updatedEvent.setState(State.PUBLISHED);
                     updatedEvent.setPublishedOn(datePublication);
                 } else if (updateEventAdminRequest.getStateAction() == StateActionForAdmin.REJECT_EVENT) {
-                    updatedEvent.setState(State.CANCELED);
-                }
+                    List<CommentEntity> commentEntityList = commentMapper
+                            .toEntityList(updateEventAdminRequest.getCommentsDtoList());
 
+                    if (commentEntityList != null && !commentEntityList.isEmpty()) {
+                        commentEntityList.forEach(commentEntity -> commentEntity.setEvent(eventEntity));
+                        commentRepository.saveAll(commentEntityList);
+                    }
+
+                    updatedEvent.setState(State.CANCELED);
+
+                    ReviewEventFullDto reviewDto = eventMapper.toReviewDto(updatedEvent);
+                    reviewDto.setComments(updateEventAdminRequest.getCommentsDtoList());
+                    return reviewDto;
+                }
             } else {
                 throw new DataAndTimeException("You can publish the event no earlier than an hour before the start");
             }
@@ -108,6 +125,22 @@ class AdminEventServiceImpl implements AdminEventService {
             throw new ConflictException("This event is published or canceled");
         }
 
-        return eventMapper.toDto(updatedEvent);
+        return eventMapper.toReviewDto(updatedEvent);
+    }
+
+    @Override
+    public List<EventFullDto> eventsWaitingForAReview() {
+        return eventMapper.toDtoList(eventRepository.findAllByState(State.PENDING));
+    }
+
+    @Override
+    public List<ReviewEventFullDto> reviewingEvents(UpdateGroupEventsAdminRequest reviewGroup) {
+        if (reviewGroup.getReviewGroup().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return reviewGroup.getReviewGroup().keySet().stream()
+                .map(id -> reviewEvent(id, reviewGroup.getReviewGroup().get(id)))
+                .collect(Collectors.toList());
     }
 }

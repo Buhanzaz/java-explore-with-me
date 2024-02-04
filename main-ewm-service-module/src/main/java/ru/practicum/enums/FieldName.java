@@ -1,0 +1,5 @@
+package ru.practicum.enums;
+
+public enum FieldName {
+    ANNOTATION, CATEGORY, DESCRIPTION, EVENT_DATE, LOCATION, PAID, PARTICIPANT_LIMIT, REQUEST_MODERATION, TITLE
+}

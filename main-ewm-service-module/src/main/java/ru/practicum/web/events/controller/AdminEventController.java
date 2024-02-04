@@ -6,7 +6,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.enums.State;
 import ru.practicum.models.events.model.dtos.EventFullDto;
+import ru.practicum.models.events.model.dtos.ReviewEventFullDto;
 import ru.practicum.models.events.model.dtos.UpdateEventAdminRequest;
+import ru.practicum.models.events.model.dtos.UpdateGroupEventsAdminRequest;
 import ru.practicum.web.events.service.AdminEventService;
 
 import javax.validation.Valid;
@@ -36,9 +38,21 @@ public class AdminEventController {
     }
 
     @PatchMapping("{eventId}")
-    public EventFullDto eventReviewByAdministrator(@PathVariable Long eventId,
-                                                   @RequestBody @Valid UpdateEventAdminRequest updateEvent) {
+    public ReviewEventFullDto eventReviewByAdministrator(@PathVariable Long eventId,
+                                                         @RequestBody @Valid UpdateEventAdminRequest updateEvent) {
         return service.reviewEvent(eventId, updateEvent);
+    }
+
+    @GetMapping("/waiting-review")
+    public List<EventFullDto> eventsWaitingForAReview() {
+        return service.eventsWaitingForAReview();
+    }
+
+    @PatchMapping("/reviews")
+    public List<ReviewEventFullDto> reviewingEvents(
+            @RequestBody @Valid UpdateGroupEventsAdminRequest groupEventsAdminRequest
+    ) {
+        return service.reviewingEvents(groupEventsAdminRequest);
     }
 
 }

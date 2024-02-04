@@ -48,7 +48,7 @@ class PublicEventServiceImpl implements PublicEventService {
                 .orElseThrow(() -> new NotFoundException("Not found event"));
 
         statisticsAndViews(eventEntity, request);
-        return eventMapper.toDto(eventEntity);
+        return eventMapper.toFullDto(eventEntity);
     }
 
     @Override
