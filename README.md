@@ -9,9 +9,13 @@
 Приложение, которое вы будете создавать, — афиша. В этой афише можно предложить какое-либо событие от выставки до похода
 в кино и собрать компанию для участия в нём.
 
+![Project](https://raw.githubusercontent.com/Buhanzaz/java-explore-with-me/main/img/project_1.png)
+
 ## Стек
 Java 11, Spring Boot , Lombok, Spring Data JPA, Hibernate, PostgreSQL, H2.
 
+## База данных
+![DataBase](https://raw.githubusercontent.com/Buhanzaz/java-explore-with-me/main/img/DataBase.png)
 
 ## Техническое задание
 
