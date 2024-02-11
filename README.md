@@ -18,19 +18,19 @@ Java 11, Spring Boot , Lombok, Spring Data JPA, Hibernate, PostgreSQL, H2.
 ![DataBase](https://raw.githubusercontent.com/Buhanzaz/java-explore-with-me/main/img/DataBase.png)
 
 ## Запуск проекта
-1. Установите Docker на вашу машину 'https://docs.docker.com/engine/install/'
-2. Клонируйте репозиторий: 'git clone https://github.com/Buhanzaz/java-explore-with-me.git'
-3. Войдите в проект и создайте jar файлы: 'mvn package'
-4. Перейдите в каталог с проектом: 'cd java-explore-with-me-main'
-5. Извлеките изображения из Docker Hub или создайте их локально, если это необходимо: 'docker-compose pull'
-6. Запустите приложение: docker-compose up -d
+1. Установите Docker на вашу машину `https://docs.docker.com/engine/install/`
+2. Клонируйте репозиторий: `git clone https://github.com/Buhanzaz/java-explore-with-me.git`
+3. Войдите в проект и создайте jar файлы: `mvn package`
+4. Перейдите в каталог с проектом: `cd java-explore-with-me-main`
+5. Извлеките изображения из Docker Hub или создайте их локально, если это необходимо: `docker-compose pull`
+6. Запустите приложение: `docker-compose up -d`
 7. Протестируйте приложение, обратившись к предоставленным URLs или endpoints.<br>
    Для этого воспользуйтесь Postman.<br>
    Тесты: <br>
    [Тест основного сервиса](https://github.com/Buhanzaz/java-explore-with-me/blob/main/postman/ewm-main-service.json) <br>
    [Тест сервиса статистики](https://github.com/Buhanzaz/java-explore-with-me/blob/main/postman/ewm-stat-service.json) <br>
    [Тест дополнительного функционала](https://github.com/Buhanzaz/java-explore-with-me/blob/main/postman/ewm-stat-service.json)
-8. Чтобы запустить приложение, вы можете использовать команду docker-compose: 'docker-compose run <service_name>'
+8. Чтобы запустить приложение, вы можете использовать команду docker-compose: `docker-compose run <service_name>`
 
 ## Техническое задание
 
